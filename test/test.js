@@ -28,21 +28,43 @@ describe('merge', () => {
 describe('loadFiles', () => {
   it('should load the files correctly', () => {
     const files = ['config/config.json', 'config/config.production.json']
-    utils.loadFiles(files, (err, res) => {
-      const obj = {
-        environment: 'production',
-        database: {
-          host: 'mysql',
-          port: 3306,
-          username: 'divido',
-          password: 'divido'
-        },
-        cache: { redis: { host: 'redis', port: 6379 } },
-        email: false
-      }
-      expect(err).equal(null)
-      expect(typeof res).equal('object')
-      expect(res).to.deep.equalInAnyOrder(obj)
-    })
+    const obj = {
+      environment: 'production',
+      database: {
+        host: 'mysql',
+        port: 3306,
+        username: 'divido',
+        password: 'divido'
+      },
+      cache: { redis: { host: 'redis', port: 6379 } },
+      email: false
+    }
+    const res = utils.loadFiles(files)
+
+    expect(typeof res).equal('object')
+    expect(res).to.deep.equalInAnyOrder(obj)
+  })
+})
+
+describe('findConfVal', () => {
+  it('should find value/object for given path', () => {
+    const path = ['cache', 'redis']
+    const obj = {
+      environment: 'production',
+      database: {
+        host: 'mysql',
+        port: 3306,
+        username: 'divido',
+        password: 'divido'
+      },
+      cache: { redis: { host: 'redis', port: 6379 } },
+      email: false
+    }
+    const expectValue = { host: 'redis', port: 6379 }
+    const res = utils.findConfVal(obj, ['database', 'host'])
+    const res1 = utils.findConfVal(obj, path)
+
+    expect(res).equal('mysql')
+    expect(res1).to.deep.equalInAnyOrder(expectValue)
   })
 })
